@@ -1131,29 +1131,7 @@ class ExploitDBSearch:
         if self.query is not None:
             msg = "Searching Vulnerable Plugins from ExploitDB website ..." ; report.verbose(msg)
             for plugin in self.query:
-                msg =  plugin; report.info(msg)
-                if not NoExploitdb :
-                    htmltext = urllib2.urlopen("http://www.exploit-db.com/search/?action=search&filter_description="+self.cmstype+"&filter_exploit_text="+plugin).read()
-                    regex = '/download/(.+?)/">'
-                    pattern =  re.compile(regex)
-                    ExploitID = re.findall(pattern,htmltext)
-                    if plugin not in self.exclude:
-                        for Eid in ExploitID:
-                            # If Eid hasn't been already found, then go on
-                            if Eid not in self.flagged:
-                                req = urllib2.Request("http://www.exploit-db.com/exploits/"+str(Eid)+"/",None,self.headers)
-                                htmltext = urllib2.urlopen(req).read()
-                                self.title = re.findall(re.compile('<title>(.+?)</title>'),htmltext)
-                                self.date = re.findall(re.compile('>Published: (.+?)</td>'),htmltext)
-                                self.verified = 'Yes'
-                                if re.search(re.compile('Not Verified'),htmltext): self.verified = 'No '
-                                if self.title and self.date:
-                                    msg = " EDB-ID: "+Eid+" Date: "+self.date[0] +" Verified: "+self.verified+" Title: "+ self.title[0].replace('&gt;', '>').replace('&lt;','<').replace('&amp;','&')
-                                    report.medium(msg)
-                                else:
-                                    msg = " EDB-ID: "+Eid; report.medium(msg)
-                        self.flagged = self.flagged + ExploitID
-                        self.flagged = sorted(set(self.flagged))
+		msg = "Found plugins: %s" % query; report.info(msg)
         else:
             pass
         
